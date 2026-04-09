@@ -82,13 +82,6 @@ cd Job-Portal-Backend
 
 ---
 
-## 🌐 Deployment
-
-Deployed on Render 🚀
-👉 https://your-app-name.onrender.com
-
----
-
 ## 📸 API Testing
 
 You can test APIs using:
