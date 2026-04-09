@@ -15,20 +15,25 @@ public class JWTService {
 
 @Value("${jwt.secret}")
 private String SECRET;
+    private Key getSignKey() {
+        return Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
-                .signWith(SignatureAlgorithm.HS256, SECRET)
+                .signWith(getSignKey())
                 .compact();
     }
 
     public String extractEmail(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET)
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
+
+        return claims.getSubject();
     }
 }
