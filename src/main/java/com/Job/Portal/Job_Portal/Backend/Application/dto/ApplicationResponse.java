@@ -1,10 +1,10 @@
 package com.Job.Portal.Job_Portal.Backend.Application.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.Job.Portal.Job_Portal.Backend.Application.entity.ApplicationStatus;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApplicationResponse {
@@ -13,4 +13,6 @@ public class ApplicationResponse {
     private String userName;
     private String jobTitle;
     private String status;
+
+
 }

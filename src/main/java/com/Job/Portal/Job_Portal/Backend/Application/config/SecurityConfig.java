@@ -23,8 +23,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity https)throws Exception{
         https
                 .csrf(csrf->csrf.disable())
+                .cors(cors -> {})
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(
+                                "/auth/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+//                        . requestMatchers("/ai/**").permitAll()
 
                         .requestMatchers("/job").hasRole("RECRUITER") // create job
                         .requestMatchers("/job/my").hasRole("RECRUITER")
@@ -37,6 +45,7 @@ public class SecurityConfig {
         return https.build();
 
     }
+
 //    @Bean
 //    public ModelMapper modelMapper() {
 //        return new ModelMapper();

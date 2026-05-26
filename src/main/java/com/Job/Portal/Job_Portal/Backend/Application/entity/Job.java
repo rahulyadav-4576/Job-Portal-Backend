@@ -1,5 +1,6 @@
 package com.Job.Portal.Job_Portal.Backend.Application.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class Job {
 
     @ManyToOne
     @JoinColumn(name = "posted_by")
+    @JsonIgnore
     private User recruiter;
 
 

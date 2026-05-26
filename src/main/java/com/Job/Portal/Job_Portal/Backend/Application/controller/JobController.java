@@ -31,7 +31,7 @@ public class JobController {
         return new ApiResponse<>(
                 true,
                 "Jobs fetched successfully",jobService.getAllJobs()
-        );
+        ); 
     }
     // Recruiter: Get My Jobs
     @GetMapping("/my")

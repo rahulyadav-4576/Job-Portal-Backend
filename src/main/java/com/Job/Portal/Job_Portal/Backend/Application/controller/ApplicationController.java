@@ -3,6 +3,7 @@ package com.Job.Portal.Job_Portal.Backend.Application.controller;
 import com.Job.Portal.Job_Portal.Backend.Application.dto.ApiResponse;
 import com.Job.Portal.Job_Portal.Backend.Application.dto.ApplicationResponse;
 import com.Job.Portal.Job_Portal.Backend.Application.entity.Application;
+import com.Job.Portal.Job_Portal.Backend.Application.entity.ApplicationStatus;
 import com.Job.Portal.Job_Portal.Backend.Application.entity.User;
 import com.Job.Portal.Job_Portal.Backend.Application.repository.ApplicationRepository;
 import com.Job.Portal.Job_Portal.Backend.Application.repository.UserRepository;
@@ -51,8 +52,21 @@ public class ApplicationController {
 
     // ✅ Get Applications for a Job (RECRUITER)
     @GetMapping("/job/{jobId}")
-    public List<ApplicationResponse> jobApplications(@PathVariable Long jobId) {
+    public  ApiResponse<List<ApplicationResponse>> jobApplications(@PathVariable Long jobId , Authentication authentication) {
 
-        return applicationService.getApplicationsByJob(jobId);
+        String email=authentication.getName();
+        return new ApiResponse<>(
+                true," Applications fetched",
+                applicationService.getApplicationsByJob(jobId,email)
+        );
+    }
+    @PutMapping("/{id}/status")
+    public ApiResponse<?> updateStatus(
+            @PathVariable Long id,
+            @RequestParam ApplicationStatus status) {
+
+        applicationService.updateStatus(id, status);
+
+        return new ApiResponse<>(true, "Status updated", null);
     }
 }

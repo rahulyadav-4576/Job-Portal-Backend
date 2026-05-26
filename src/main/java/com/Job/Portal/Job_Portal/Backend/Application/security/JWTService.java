@@ -13,7 +13,7 @@ import java.util.Date;
 @Service
 public class JWTService {
 
-    private final String SECRET="dsjbdjdhsjjkdsdjkdshbdshubshkhkbkbdskbhkbshkbjshk";
+    private final String SECRET="dsjbdjdhsiduweluiuewuie7yifheyrfhjruiwjwejk4783646jwjds784q3snmww7eywsdhew7uydshwe7dushweyadsuhwedyusxkbdskbhkbshkbjshk";
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
