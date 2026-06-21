@@ -3,6 +3,8 @@ package com.Job.Portal.Job_Portal.Backend.Application.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Setter
 @AllArgsConstructor
@@ -23,4 +25,8 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;//USER  or  RECRUITER
+    private String resumeUrl;
+
+    @OneToMany(mappedBy = "user")
+    private List<Application> applications;
 }

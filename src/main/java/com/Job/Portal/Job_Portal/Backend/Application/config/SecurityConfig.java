@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,39 +17,75 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity https)throws Exception{
-        https
-                .csrf(csrf->csrf.disable())
-                .cors(cors -> {})
-                .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/auth/**").permitAll()
+    public SecurityFilterChain securityFilterChain(HttpSecurity https) throws Exception {
+        https.csrf(csrf -> csrf.disable())
+                .cors(cors -> {
+                })
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
+                .authorizeHttpRequests(auth -> auth
+
                         .requestMatchers(
                                 "/auth/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html"
                         ).permitAll()
-//                        . requestMatchers("/ai/**").permitAll()
 
-                        .requestMatchers("/job").hasRole("RECRUITER") // create job
-                        .requestMatchers("/job/my").hasRole("RECRUITER")
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/job/**"
+                        ).hasRole("RECRUITER")
 
-                        .requestMatchers("/applications/apply/{jobId}/**").hasRole("USER")
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/job/**"
+                        ).hasRole("RECRUITER")
 
-                        .requestMatchers("/applications/job/**").hasRole("RECRUITER")
-                        .anyRequest().authenticated())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/job/**"
+                        ).hasRole("RECRUITER")
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/job/**"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                "/applications/apply/**"
+                        ).hasRole("USER")
+
+                        .requestMatchers(
+                                "/applications/job/**"
+                        ).hasRole("RECRUITER")
+
+                        .requestMatchers(
+                                "/dashboard/**"
+                        ).hasRole("RECRUITER")
+
+                        .requestMatchers("/savedjob/**"
+
+                        ).hasRole("USER")
+
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(
+                        jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
         return https.build();
 
     }
-
-//    @Bean
-//    public ModelMapper modelMapper() {
-//        return new ModelMapper();
-//    }
 }
+

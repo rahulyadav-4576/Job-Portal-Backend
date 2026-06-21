@@ -9,6 +9,7 @@ import com.Job.Portal.Job_Portal.Backend.Application.repository.ApplicationRepos
 import com.Job.Portal.Job_Portal.Backend.Application.repository.UserRepository;
 import com.Job.Portal.Job_Portal.Backend.Application.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,13 +61,19 @@ public class ApplicationController {
                 applicationService.getApplicationsByJob(jobId,email)
         );
     }
-    @PutMapping("/{id}/status")
-    public ApiResponse<?> updateStatus(
-            @PathVariable Long id,
-            @RequestParam ApplicationStatus status) {
+    @PatchMapping("/{applicationId}/status")
+    public ResponseEntity<Application> updateStatus(
+            @PathVariable Long applicationId,
+            @RequestParam ApplicationStatus status,
+            Authentication authentication
+    ) {
 
-        applicationService.updateStatus(id, status);
-
-        return new ApiResponse<>(true, "Status updated", null);
+        return ResponseEntity.ok(
+                applicationService.updateStatus(
+                        applicationId,
+                        status,
+                        authentication.getName()
+                )
+        );
     }
 }

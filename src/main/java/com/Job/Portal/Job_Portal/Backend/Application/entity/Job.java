@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,6 +28,9 @@ public class Job {
     @JoinColumn(name = "posted_by")
     @JsonIgnore
     private User recruiter;
+    @OneToMany(mappedBy = "job")
+    private List<Application> applications;
+
 
 
 }

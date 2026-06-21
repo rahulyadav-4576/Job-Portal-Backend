@@ -1,36 +1,39 @@
 package com.Job.Portal.Job_Portal.Backend.Application.exception;
-
-import com.Job.Portal.Job_Portal.Backend.Application.dto.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handleResourceNotFound(
+            ResourceNotFoundException ex
+    ) {
 
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse<?>> handleRuntime(RuntimeException ex) {
         return new ResponseEntity<>(
-                new ApiResponse<>(false, ex.getMessage(), null),
-                HttpStatus.BAD_REQUEST
+                Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "message", ex.getMessage(),
+                        "status", HttpStatus.NOT_FOUND.value()
+                ),
+                HttpStatus.NOT_FOUND
         );
     }
 
-
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleException(Exception ex, HttpServletRequest request) {
-
-        String path = request.getRequestURI();
-
-
-        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
-        }
+    public ResponseEntity<?> handleGlobalException(
+            Exception ex
+    ) {
 
         return new ResponseEntity<>(
-                new ApiResponse<>(false, "Something went wrong", null),
+                Map.of(
+                        "timestamp", LocalDateTime.now(),
+                        "message", ex.getMessage(),
+                        "status", HttpStatus.INTERNAL_SERVER_ERROR.value()
+                ),
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }

@@ -5,6 +5,7 @@ import com.Job.Portal.Job_Portal.Backend.Application.entity.Application;
 import com.Job.Portal.Job_Portal.Backend.Application.entity.ApplicationStatus;
 import com.Job.Portal.Job_Portal.Backend.Application.entity.Job;
 import com.Job.Portal.Job_Portal.Backend.Application.entity.User;
+import com.Job.Portal.Job_Portal.Backend.Application.exception.ResourceNotFoundException;
 import com.Job.Portal.Job_Portal.Backend.Application.repository.ApplicationRepository;
 import com.Job.Portal.Job_Portal.Backend.Application.repository.JobRepository;
 import com.Job.Portal.Job_Portal.Backend.Application.repository.UserRepository;
@@ -27,7 +28,10 @@ public class ApplicationService {
     public Application applyJob(Long jobId, String email) {
         logger.info("User {} applying for job {}", email, jobId);
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        ));
 
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
@@ -39,7 +43,7 @@ public class ApplicationService {
         Application app = Application.builder()
                 .user(user)
                 .job(job)
-                .status(ApplicationStatus.APPLIED)
+                .status(ApplicationStatus.PENDING)
                 .build();
         return applicationRepository.save(app);
     }
@@ -78,13 +82,30 @@ public class ApplicationService {
                 ))
                 .toList();
     }
-    public void updateStatus(Long appId, ApplicationStatus status) {
+    public Application updateStatus(
+            Long applicationId,
+            ApplicationStatus status,
+            String recruiterEmail
+    )
+    {
+        Application application =
+                applicationRepository.findById(applicationId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Application not found"
+                                ));
 
-        Application app = applicationRepository.findById(appId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+        Job job = application.getJob();
 
-        app.setStatus(status);
+        if (!job.getRecruiter()
+                .getEmail()
+                .equals(recruiterEmail)) {
 
-        applicationRepository.save(app);
+            throw new RuntimeException(
+                    "Unauthorized access"
+            );
+        }
+
+        return applicationRepository.save(application);
     }
 }

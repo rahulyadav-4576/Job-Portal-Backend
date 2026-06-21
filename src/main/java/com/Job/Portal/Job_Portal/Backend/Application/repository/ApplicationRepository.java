@@ -1,6 +1,7 @@
 package com.Job.Portal.Job_Portal.Backend.Application.repository;
 
 import com.Job.Portal.Job_Portal.Backend.Application.entity.Application;
+import com.Job.Portal.Job_Portal.Backend.Application.entity.ApplicationStatus;
 import com.Job.Portal.Job_Portal.Backend.Application.entity.Job;
 import com.Job.Portal.Job_Portal.Backend.Application.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,10 @@ public interface ApplicationRepository extends JpaRepository<Application,Long> {
     List<Application> findByUser(User user);
     List<Application> findByJob(Job job);
     Optional<Application> findByUserAndJob(User user, Job job);
+    long countByJobRecruiter(User recruiter);
+
+    long countByJobRecruiterAndStatus(
+            User recruiter,
+            ApplicationStatus status
+    );
 }
