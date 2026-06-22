@@ -14,7 +14,7 @@ import java.util.Date;
 @Service
 public class JWTService {
 
-    @Value("${jwt.secret}")
+    @Value("${JWT_SECRET}")
     private String SECRET;
 
     private Key key;
