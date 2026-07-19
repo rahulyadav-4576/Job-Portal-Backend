@@ -93,7 +93,7 @@ PostgreSQL 13+
 git clone https://github.com/rahulyadav-4576/Job-Portal-Backend.git
 cd Job-Portal-Backend
 
-3. Configure Database
+2. Configure Database
 
 Update src/main/resources/application.properties (or application.yml):
 
